@@ -22,4 +22,4 @@ java -jar Mikan_RSS_Reader.jar [url] [option]
 
 不知道什么是RSS？看图：
 
-![Screenshot 2024-03-31 123135.png](assets/Screenshot 2024-03-31 123135.png)
+![Screenshot 2024-03-31 123135.png](assets/Screenshot%202024-03-31%20123135.png)
