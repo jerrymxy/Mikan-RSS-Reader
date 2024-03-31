@@ -2,7 +2,7 @@ package com.jerrymxy.mikanrssreader.utils;
 
 public class Globals {
     // 蜜柑计划地址前缀
-    public static final String MIKANANIME_URL = "https://mikanime.me/Home/Episode/";
+    public static final String MIKANANIME_URL = "https://mikanani.me//Home/Episode/";
 
     // 蜜柑计划备份站地址前缀
     public static final String MIKANANIME_BACKUP_URL = "https://mikanime.tv/Home/Episode/";
