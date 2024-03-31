@@ -24,6 +24,9 @@ public class RSSParser {
         this.parse();
     }
 
+    /**
+     * 获取RSS，使用ROME解析
+     */
     public void parse() {
         try (CloseableHttpClient client = HttpClients.createMinimal()) {
             HttpUriRequest request = new HttpGet(url);
@@ -32,13 +35,16 @@ public class RSSParser {
                 System.out.println("Connecting...");
                 SyndFeedInput input = new SyndFeedInput();
                 feed = input.build(new XmlReader(stream));
-                System.out.println("Get: " + feed.getTitle());
+                System.out.println("标题： " + feed.getTitle());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * 获取磁力链接
+     */
     public List<String> getMagnetURI() {
         List<String> result = new ArrayList<>();
         List<SyndEntry> syndEntries = feed.getEntries();
@@ -50,7 +56,7 @@ public class RSSParser {
             } else if (link.startsWith(Globals.MIKANANIME_BACKUP_URL)) {
                 curMagnetUri = Globals.MAGNET_PREFIX + link.substring(Globals.MIKANANIME_BACKUP_URL.length());
             } else {
-                System.err.println("Invalid entry: " + entry.getTitle() + " Link: " + link);
+                System.err.println("Invalid entry: " + entry.getTitle() + ", link: " + link);
                 continue;
             }
             result.add(curMagnetUri);
@@ -58,6 +64,9 @@ public class RSSParser {
         return result;
     }
 
+    /**
+     * 获取种子链接
+     */
     public List<String> getTorrentUrl() {
         List<String> result = new ArrayList<>();
         List<SyndEntry> syndEntries = feed.getEntries();
@@ -65,5 +74,9 @@ public class RSSParser {
             result.add(entry.getEnclosures().getFirst().getUrl());
         }
         return result;
+    }
+
+    public String getTitle() {
+        return feed.getTitle();
     }
 }
