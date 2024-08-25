@@ -14,10 +14,12 @@ jar包是使用JDK21编译的
 
 文件会下载到jar包所在的目录下。
 
+2024.8更新：支持过滤关键字
+
 或者也可以直接用命令行
 
 ```shell
-java -jar Mikan_RSS_Reader.jar [url] [option]
+java -jar Mikan_RSS_Reader.jar [url] [option] [pattern]
 ```
 
 不知道什么是RSS？看图：

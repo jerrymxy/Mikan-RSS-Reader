@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+
+<configuration debug="false">
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+    <!--定义日志文件的存储地址 -->
+    <Property name="logDir" value="./logs" />
+    <Property name="histLogDir" value="./logs/hist"/>
+    <Property name="splitSize" value="1MB" />
+
+    <!--appender01 控制台日志， 控制台输出 -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度,%logger:显示类名 %msg：日志消息，%n是换行符-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{10} %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--appender02 日志输出，非滚动，每次新日志均追加到同一文件 -->
+    　　　<appender name="ALLLog" class="ch.qos.logback.core.FileAppender">
+    　　　　　　<file>${logDir}/allinone.log</file>
+    　　　　　　<append>true</append>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <level>error</level>
+        <onMatch>ACCEPT</onMatch>
+        <onMismatch>DENY</onMismatch>
+    </filter>
+    　　　　　　<encoder>
+    　　　　　　　　　<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} %msg%n</pattern>
+    　　　　　　</encoder>
+    　　　</appender>
+
+    <!--appender03 根据大小和时间策略的滚动日志输出，Error及以上级别输出 -->
+    <appender name="RollingFileError" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>error</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!--日志文件输出的文件名，日期必须加，如果单天需要生成多个日志，则需要添加%i-->
+            <FileNamePattern>${logDir}/error.%d{yyyy-MM-dd}-%i.log</FileNamePattern>
+            <!--历史日志文件保留天数，不包含当日日志，且需结合cleanHistoryOnStart字段使用-->
+            <!--可以按“文件数量、小时、天、月、年”等策略实现文件保留 -->
+            <MaxHistory>3</MaxHistory>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+            <!-- 单天单个日志最大size -->
+            <maxFileSize>1MB</maxFileSize>
+            <!--仅针对当天的日志进行总size控制,日志名中的“i”保留最后数值 -->
+            <totalSizeCap>10MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度，%logger:显示类名 %msg：日志消息，%n是换行符-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} %msg%n</pattern>
+        </encoder>
+        <!--日志文件最大的大小-->
+    </appender>
+
+    <!--appender04 根据时间滚动策略的日志输出，Info及以上级别输出 -->
+    <appender name="RollingFileInfo" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>info</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日志文件输出的文件名,不支持%i-->
+            <FileNamePattern>${logDir}/info.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <!--日志文件保留天数-->
+            <MaxHistory>2</MaxHistory>
+            <totalSizeCap>1MB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度，%logger:显示类名 %msg：日志消息，%n是换行符-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--appender05 固定窗口滚动策略的日志输出，Debug及以上级别输出 -->
+    <appender name="RollingFileDebug" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>debug</level>
+        </filter>
+        <file>${logDir}/debug.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${logDir}/debug.%i.log</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>3</maxIndex>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度，%logger:显示类名 %msg：日志消息，%n是换行符-->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} %msg%n</pattern>
+        </encoder>
+        <!--日志文件最大的大小-->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <!-- 日志输出级别 -->
+    <root level="ERROR">
+        <appender-ref ref="Console" />
+<!--        <appender-ref ref="RollingFileError" />-->
+<!--        <appender-ref ref="RollingFileInfo" />-->
+<!--        <appender-ref ref="RollingFileDebug" />-->
+    </root>
+
+</configuration>

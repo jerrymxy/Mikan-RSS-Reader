@@ -1,11 +1,15 @@
 package com.jerrymxy.mikanrssreader.downloader;
 
 import com.jerrymxy.mikanrssreader.utils.Globals;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.fluent.Request;
+import org.apache.hc.client5.http.fluent.Response;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,8 +18,10 @@ import java.util.Date;
 import java.util.List;
 
 public class Downloader {
-    private List<String> urls;
+    private final List<String> urls;
     private String filePath;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Downloader.class);
 
     public Downloader(List<String> urls) {
         this.urls = urls;
@@ -27,6 +33,25 @@ public class Downloader {
     }
 
     public void download() {
+        File file = new File(filePath);
+        if (!file.exists() || !file.isDirectory()) {
+            file.mkdir();
+        }
+        for (String url : urls) {
+            try {
+                Response response = Request.get(url).execute();
+                String filename = url.substring(url.lastIndexOf("/") + 1);
+                System.out.print("Downloading: " + filename + " ...");
+                response.saveContent(new File("./" + filePath + "/" + filename));
+                System.out.println(" Done!");
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+    }
+
+    @Deprecated
+    public void download2() {
         for (String url : urls) {
             try (CloseableHttpClient client = HttpClients.createDefault();
                  CloseableHttpResponse response = client.execute(new HttpGet(url))) {
@@ -51,7 +76,7 @@ public class Downloader {
                     System.out.println(" Done!");
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
